@@ -233,9 +233,13 @@ script:
 
       - if:
           condition:
-            text_sensor.state:
-              id: last_product
-              state: 'null'
+            or:
+              - text_sensor.state:
+                  id: last_product
+                  state: 'null'
+              - text_sensor.state:
+                  id: last_product
+                  state: ''
           then:
               - switch.turn_on: beeper
               - delay: 800ms
