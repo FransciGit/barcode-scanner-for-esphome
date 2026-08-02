@@ -124,6 +124,8 @@ font:
   - file: "_fonts/arial.ttf"
     id: arial_font_18
     size: 18
+    glyphs:  |
+      ß!?"%()+*=,-_.:°ø0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖ abcdefghijklmnopqrstuvwxyzäüö€@<>/
   - file: "_fonts/arial.ttf"
     id: arial_font
     size: 20
