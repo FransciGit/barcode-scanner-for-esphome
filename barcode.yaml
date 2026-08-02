@@ -108,7 +108,14 @@ uart:
   id: uart_bus
   baud_rate: 9600
   tx_pin: "${uart_tx_pin}"
-  rx_pin: "${uart_rx_pin}"
+  rx_pin:
+    number: "${uart_rx_pin}"
+    # Der Pull-up hält die Leitung im UART-Ruhezustand (HIGH), solange der
+    # Scanner nichts sendet. Ohne ihn erzeugt ein offener Eingang laufend
+    # Störbytes, die als Scans durchgehen würden.
+    mode:
+      input: true
+      pullup: true
   debug:
     direction: BOTH
     dummy_receiver: true
