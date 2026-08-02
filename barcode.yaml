@@ -21,6 +21,11 @@ substitutions:
 
 esp32:
   board: wemos_d1_mini32
+  # Ohne diese Angabe würde ESPHome inzwischen ESP-IDF verwenden. Dieses
+  # Projekt wurde gegen Arduino entwickelt, und der Scanner hängt an
+  # GPIO9/GPIO10 - Flash-Pins, die sich unter ESP-IDF anders verhalten.
+  framework:
+    type: arduino
   # GPIO9/GPIO10 führen zum Scanner, sind im QIO-Flash-Modus aber vom
   # SPI-Flash belegt. DIO hält diese beiden Pins frei.
   flash_mode: dio
