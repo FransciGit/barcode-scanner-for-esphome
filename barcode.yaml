@@ -21,6 +21,9 @@ substitutions:
 
 esp32:
   board: wemos_d1_mini32
+  # GPIO9/GPIO10 führen zum Scanner, sind im QIO-Flash-Modus aber vom
+  # SPI-Flash belegt. DIO hält diese beiden Pins frei.
+  flash_mode: dio
 
 # ----------------------------------
 # ----       CONFIG END         ----
@@ -113,11 +116,26 @@ uart:
       delimiter: "\n"
     sequence:
       - lambda: UARTDebug::log_string(direction, bytes);
-      - text_sensor.template.publish:
-          id: barcode_scanner
-          state: !lambda |
-            std::string s(bytes.begin(), bytes.end());
-            return s;
+      - lambda: |-
+          std::string s(bytes.begin(), bytes.end());
+          while (!s.empty() && (s.back() == '\r' || s.back() == '\n')) {
+            s.pop_back();
+          }
+          // Nur druckbares ASCII in plausibler Länge durchlassen. Störungen
+          // auf der Leitung dürfen weder einen Scan auslösen noch als
+          // ungültiges UTF-8 in der API landen.
+          bool valid = s.size() >= 4 && s.size() <= 32;
+          for (size_t i = 0; i < s.size() && valid; i++) {
+            unsigned char c = (unsigned char) s[i];
+            if (c < 0x20 || c > 0x7E) {
+              valid = false;
+            }
+          }
+          if (valid) {
+            id(barcode_scanner).publish_state(s);
+          } else {
+            ESP_LOGD("uart", "Ungueltige Daten verworfen (%u Bytes)", (unsigned) s.size());
+          }
 
 
 font:
