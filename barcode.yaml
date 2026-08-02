@@ -318,8 +318,8 @@ script:
     then:
       - http_request.get:
           verify_ssl: false
-          headers:
-            Content-Type: application/json          
+          request_headers:
+            Content-Type: application/json
           url: !lambda |-      
             std::string url = "https://world.openfoodfacts.org/api/v2/product/" + ean + "?fields=brands,product_name,code";
             ESP_LOGD("openFood", "API: %s\n", url.c_str());
