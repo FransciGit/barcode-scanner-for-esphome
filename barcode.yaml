@@ -270,6 +270,7 @@ script:
       ean: std::string
     then:
       - http_request.get:
+          capture_response: true
           url: !lambda |-
                   return (std::string) "https://opengtindb.org/?ean=" + ean + "&cmd=query&queryid=${rest_opentindb_queryid}";
           on_response:
@@ -277,7 +278,8 @@ script:
               - lambda: |-
                   char delimiter[] = "\n";
                   char *ptr;
-                  ptr = strtok((char*)id(http_request_data).get_string(), delimiter);
+                  std::string data = body;
+                  ptr = strtok(&data[0], delimiter);
                   ESP_LOGD("opengtin", "ptr: %s\n", ptr);
                   int i = 0;
                   char *name_line = NULL;
@@ -319,6 +321,7 @@ script:
       ean: std::string
     then:
       - http_request.get:
+          capture_response: true
           request_headers:
             Content-Type: application/json
           url: !lambda |-      
@@ -331,15 +334,13 @@ script:
               - if:
                   condition:
                      lambda: |-
-                        return status_code == 200;
-                  then:              
+                        return response->status_code == 200;
+                  then:
                     - lambda: |-
-                        char *ptr;
-                        ptr = (char*)id(http_request_data).get_string();
-                        ESP_LOGD("custom", "ptr: %s\n", ptr);
-                        json::parse_json(ptr, [](JsonObject root) {
-                          std::string jsonStr;
-                          id(last_brand).publish_state(root["product"]["brands"]);
-                          id(last_product).publish_state(root["product"]["product_name"]);
+                        ESP_LOGD("custom", "body: %s\n", body.c_str());
+                        json::parse_json(body, [](JsonObject root) -> bool {
+                          id(last_brand).publish_state(root["product"]["brands"].as<std::string>());
+                          id(last_product).publish_state(root["product"]["product_name"].as<std::string>());
+                          return true;
                         });
                   
