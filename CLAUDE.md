@@ -82,10 +82,37 @@ davon betroffen ist.
 Entitäten des Geräts:
 
 - `sensor.barcode_scanner_9809d0_barcode_scanner_ean` — die gescannte EAN
-  (nach dem Booten: `Scan Barcode`)
 - `sensor.barcode_scanner_9809d0_barcode_scanner_brand` — Hersteller
 - `sensor.barcode_scanner_9809d0_barcode_scanner_product` — Produktname
 - `switch.barcode_scanner_9809d0_barcode_scanner_buzzer` — Buzzer
+
+### ⚠️ Prüfen, ob ein Scan ankam: ins Logbuch sehen, nicht auf den Zustand
+
+Die Sensoren fallen **rund 10 Sekunden nach jedem Scan** auf ihren Ruhewert
+zurück — die EAN auf `Scan Barcode`, Hersteller und Produkt auf leer. Das ist die
+Ruheanzeige fürs Display und so gewollt.
+
+Der aktuelle Zustand zeigt deshalb fast immer den Ruhewert. **Daraus zu schließen,
+es sei kein Scan angekommen, ist ein Trugschluss** — man müsste das
+10-Sekunden-Fenster zufällig treffen.
+
+Richtig ist die Historie:
+
+```
+ha_get_logs(source="logbook",
+            entity_id="sensor.barcode_scanner_9809d0_barcode_scanner_ean",
+            hours_back=2)
+```
+
+Ein erfolgreicher Scan sieht dort so aus — Wert, dann ~10 s später der Ruhewert:
+
+```
+11:38:58  Scan Barcode
+11:38:48  034000727070      ← der Scan
+```
+
+Auch `last_triggered` der Automation ist ein verlässlicher Beleg dafür, dass die
+Kette durchlief.
 
 ### Nebenbefund: veralteter Verweis in `barcode.yaml`
 
