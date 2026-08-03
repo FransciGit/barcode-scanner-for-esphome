@@ -114,19 +114,6 @@ Ein erfolgreicher Scan sieht dort so aus — Wert, dann ~10 s später der Ruhewe
 Auch `last_triggered` der Automation ist ein verlässlicher Beleg dafür, dass die
 Kette durchlief.
 
-### Nebenbefund: veralteter Verweis in `barcode.yaml`
-
-Zeile 40 enthält noch die Adresse des Originalprojekts:
-
-```yaml
-dashboard_import:
-  package_import_url: github://SmartHome-yourself/barcode-scanner-for-esphome/barcode.yaml@main
-```
-
-Das betrifft nur den Übernahme-Dialog von ESPHome („Gerät adoptieren"), nicht die
-laufende Konfiguration — harmlos, aber inkonsistent. Ein weiteres Gerät, das über
-diesen Weg eingerichtet wird, bekäme die Version des Originals.
-
 ## Weitere Regeln
 
 - `substitutions` sind die Schnittstelle zur Gerätekonfiguration. Namen **nicht**
