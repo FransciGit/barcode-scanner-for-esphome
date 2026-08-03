@@ -43,7 +43,11 @@ dashboard_import:
   package_import_url: github://SmartHome-yourself/barcode-scanner-for-esphome/barcode.yaml@main
   import_full_config: false
 
+# Seit ESPHome 2024.6 ist ota eine Liste von Verfahren. Ein leeres "ota:"
+# richtet keines mehr ein, und das Hochladen scheitert mit
+# "Cannot upload via web_server OTA".
 ota:
+  - platform: esphome
 
 api:
   services:
